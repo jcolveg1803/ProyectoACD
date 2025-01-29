@@ -1,0 +1,25 @@
+# Archivos de compilación
+*.class
+*.war
+*.ear
+
+# Archivos de logs
+*.log
+logs/
+hs_err_pid*
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+
+# Configuración específica de Eclipse
+.project
+.classpath
+.settings/
+.apt_generated/
+.factorypath/
