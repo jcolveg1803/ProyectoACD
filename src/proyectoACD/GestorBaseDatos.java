@@ -6,12 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import proyectoACD.exceptions.UserAlreadyExistsException;
+import proyectoACD.exceptions.UserNotExistsException;
+
+
 public class GestorBaseDatos {
 	private Connection conn=null;
 	private final String BD_NAME="KartingJACV";
 	private final String BD_URL="jdbc:mysql://localhost:3306/"+BD_NAME;
 	private final String BD_USER="root";
 	private final String BD_PASS="";
+	
 	
 	public boolean crearEstructuraTablas()
 	{
@@ -145,12 +150,11 @@ public class GestorBaseDatos {
 		return existe;
 	}
 	
-	public boolean crearUsuario(String id, String nombre, String apellidos, String email, String telefono)
+	public boolean crearUsuario(String id, String nombre, String apellidos, String email, String telefono) throws UserAlreadyExistsException
 	{
 		
-		if (compruebaExiste(id)) {
-			System.err.println("El usuario que estás intentando crear ya existe, prueba a iniciar sesión");
-			return false;
+		if (compruebaExiste(id)) { //comprueba que el usuario no exista antes de crearlo
+			throw new UserAlreadyExistsException("El usuario que quieres introducir ya existe");
 		}
 		
 		String insertSQL = "Insert into clientes(id_cliente, nombre, apellido, email, telefono) VALUES (?, ?, ?, ?, ?);";
@@ -186,14 +190,39 @@ public class GestorBaseDatos {
 		return false;
 	}
 	
-	public boolean borrarUsuario(String id)
+	public boolean borrarUsuario(String id) throws UserNotExistsException
 	{
-		if (!compruebaExiste(id)) {
-			System.err.println("DNI no encontrado");
-			return false;
+		
+		if (!compruebaExiste(id))
+		{
+			throw new UserNotExistsException("El usuario con el dni " + id + " no existe");
 		}
 		
+		String querySQL = "DELETE FROM usuarios WHERE id = ?";
 		
+		PreparedStatement sentencia = null;
+		
+		try
+		{
+			sentencia = conn.prepareStatement(querySQL);
+			sentencia.setString(0, id);
+			sentencia.executeUpdate();
+		} catch (SQLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				sentencia.close();
+			} catch (SQLException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return false;
 	}
