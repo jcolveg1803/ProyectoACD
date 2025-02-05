@@ -27,7 +27,7 @@ public class GestorBaseDatos {
 				+ "email VARCHAR(100),"
 				+ "telefono CHAR(9));";
 		String sqlKarts = "CREATE TABLE karts("
-				+ "id_kart INT PRIMARY KEY,"
+				+ "id_kart INT PRIMARY KEY AUTO_INCREMENT,"
 				+ "numero_kart INT,"
 				+ "distancia_recorrida INT,"
 				+ "estado ENUM(disponible, mantenimiento, retirado));";
@@ -223,6 +223,12 @@ public class GestorBaseDatos {
 				e.printStackTrace();
 			}
 		}
+		
+		return false;
+	}
+	
+	public boolean nuevoKart()
+	{
 		
 		return false;
 	}
