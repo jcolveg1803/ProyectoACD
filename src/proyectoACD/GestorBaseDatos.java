@@ -64,21 +64,20 @@ public class GestorBaseDatos {
 			sentencia = conn.prepareStatement(sqlVueltas);
 			sentencia.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}finally {
 			try {
 				sentencia.close();
 				return true;
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
 		
 		return false;
 	}
-	
 	
 	public boolean conectar() {
 		boolean res=false;
@@ -88,7 +87,7 @@ public class GestorBaseDatos {
 			conn=DriverManager.getConnection(BD_URL, BD_USER, BD_PASS);
 			res=true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -102,7 +101,7 @@ public class GestorBaseDatos {
 			conn.close();
 			res=true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -127,13 +126,13 @@ public class GestorBaseDatos {
 			resultado = sentencia.executeQuery(); //asigna el valor de la consulta al ResultSet anterior
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}finally {
 			try {
 				sentencia.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -143,7 +142,7 @@ public class GestorBaseDatos {
 				existe = true; //devuelve True si el usuario existe
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -153,7 +152,8 @@ public class GestorBaseDatos {
 	public boolean crearUsuario(String id, String nombre, String apellidos, String email, String telefono) throws UserAlreadyExistsException
 	{
 		
-		if (compruebaExiste(id)) { //comprueba que el usuario no exista antes de crearlo
+		if (compruebaExiste(id)) //comprueba que el usuario no exista antes de crearlo
+		{ 
 			throw new UserAlreadyExistsException("El usuario que quieres introducir ya existe");
 		}
 		
@@ -161,7 +161,8 @@ public class GestorBaseDatos {
 		
 		PreparedStatement op = null;
 		
-		try {
+		try
+		{
 			op = conn.prepareStatement(insertSQL);
 			
 			op.setString(0, id);
@@ -172,17 +173,21 @@ public class GestorBaseDatos {
 			
 			op.executeUpdate();
 			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (SQLException e)
+		{
+			
 			e.printStackTrace();
 		}
 		finally
 		{
-			try {
+			try
+			{
 				op.close();
 				return true;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+			}
+			catch (SQLException e)
+			{
 				e.printStackTrace();
 			}
 		}
@@ -207,9 +212,10 @@ public class GestorBaseDatos {
 			sentencia = conn.prepareStatement(querySQL);
 			sentencia.setString(0, id);
 			sentencia.executeUpdate();
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		finally
@@ -217,9 +223,10 @@ public class GestorBaseDatos {
 			try
 			{
 				sentencia.close();
-			} catch (SQLException e)
+			}
+			catch (SQLException e)
 			{
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -227,9 +234,108 @@ public class GestorBaseDatos {
 		return false;
 	}
 	
-	public boolean nuevoKart()
+	public boolean nuevoKart(int numeroKart, int distancia, String estado)
 	{
+		String query = "INSERT INTO karts(numero_kart, distancia_recorrida, estado) values(?, ?, ?);";
+		
+		PreparedStatement sp = null;
+		
+		try
+		{
+			sp = conn.prepareStatement(query);
+			
+			sp.setInt(0, numeroKart);
+			sp.setInt(1, distancia);
+			sp.setString(2, estado);
+			
+			sp.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				sp.close();
+				return true;
+			} 
+			catch (SQLException e)
+			{
+				
+				e.printStackTrace();
+			}
+		}
 		
 		return false;
 	}
+
+	public boolean borrarKart(int idKart)
+	{
+		String query = "DELETE FROM karts WHERE id = ?;";
+		
+		PreparedStatement sp = null;
+		try 
+		{
+			sp = conn.prepareStatement(query);
+			
+			sp.setInt(0, idKart);
+			
+			sp.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			
+		}
+		finally
+		{
+			try
+			{
+				sp.close();
+				return true;
+			}
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	public boolean cambiarEstadoKart(int idKart, String nuevoEstado)
+	{
+		String query = "UPDATE karts SET estado=? where id=?;";
+		
+		PreparedStatement sp = null;
+		
+		try
+		{
+			sp=conn.prepareStatement(query);
+			sp.setInt(0, idKart);
+			sp.setString(1, nuevoEstado);
+			sp.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				sp.close();
+				return true;
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	
 }
