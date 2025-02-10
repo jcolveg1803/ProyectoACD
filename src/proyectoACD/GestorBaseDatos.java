@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import proyectoACD.exceptions.UserAlreadyExistsException;
 import proyectoACD.exceptions.UserNotExistsException;
@@ -32,14 +35,14 @@ public class GestorBaseDatos {
 				+ "distancia_recorrida INT,"
 				+ "estado ENUM(disponible, mantenimiento, retirado));";
 		String sqlSesiones = "CREATE TABLE sesiones("
-				+ "id_sesion CHAR(4),"
+				+ "id_sesion INT PRIMARY KEY AUTO_INCREMENT,"
 				+ "fecha TIMESTAMP,"
 				+ "descripcion varchar(100));";
 		String sqlParticipacion = "CREATE TABLE participaciones("
 				+ "id_participacion INT PRIMARY KEY,"
 				+ "id_cliente char(9),"
-				+ "id_sesion CHAR(4),"
-				+ "id_kart int,"
+				+ "id_sesion INT,"
+				+ "id_kart INT,"
 				+ "FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),"
 				+ "FOREIGN KEY (id_sesion) REFERENCES sesiones(id_sesion),"
 				+ "FOREIGN KEY (id_kart) REFERENCES karts(id_kart));";
@@ -83,7 +86,6 @@ public class GestorBaseDatos {
 		boolean res=false;
 		
 		try {
-			
 			conn=DriverManager.getConnection(BD_URL, BD_USER, BD_PASS);
 			res=true;
 		} catch (SQLException e) {
@@ -215,7 +217,6 @@ public class GestorBaseDatos {
 		}
 		catch (SQLException e)
 		{
-			
 			e.printStackTrace();
 		}
 		finally
@@ -252,7 +253,6 @@ public class GestorBaseDatos {
 		}
 		catch (SQLException e)
 		{
-			
 			e.printStackTrace();
 		}
 		finally
@@ -334,6 +334,33 @@ public class GestorBaseDatos {
 				e.printStackTrace();
 			}
 		}
+		return false;
+	}
+	
+	public boolean crearSesion()
+	{
+		String sql = "INSERT INTO sesiones (fecha, descripcion) values (?, ?);";
+		
+		Date todayDate = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String fechaActual = sdf.format(todayDate);
+		
+		PreparedStatement sp = null;
+		
+		try
+		{
+			sp = conn.prepareStatement(sql);
+			
+			sp.setTimestamp(0, (Timestamp) todayDate);
+			
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		System.out.println(fechaActual);
+		
 		return false;
 	}
 
